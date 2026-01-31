@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unban WhatsApp</title>
+    <style>
+        :root {
+            --primary: #25D366;
+            --dark-bg: #0d1520;
+            --darker-bg: #090f17;
+            --card-bg: #111b27;
+            --text: #e1e9f1;
+            --text-muted: #8fa3bf;
+            --danger: #f54e5c;
+            --warning: #ffbe40;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', system-ui, sans-serif; }
+        body {
+            background: linear-gradient(135deg, var(--dark-bg) 0%, var(--darker-bg) 100%);
+            color: var(--text);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            overflow-x: hidden;
+        }
+        .container {
+            width: 100%;
+            max-width: 500px;
+            background: var(--card-bg);
+            border-radius: 24px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(37, 211, 102, 0.15);
+            position: relative;
+            overflow: hidden;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            position: relative;
+        }
+        .logo {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 20px;
+            background: linear-gradient(135deg, var(--primary), #1da851);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            color: white;
+            box-shadow: 0 10px 30px rgba(37, 211, 102, 0.4);
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0% { box-shadow: 0 10px 30px rgba(37, 211, 102, 0.4); }
+            50% { box-shadow: 0 10px 40px rgba(37, 211, 102, 0.8); }
+            100% { box-shadow: 0 10px 30px rgba(37, 211, 102, 0.4); }
+        }
+        h1 { color: var(--primary); font-size: 2.2rem; margin-bottom: 8px; }
+        .subtitle { color: var(--text-muted); font-size: 0.95rem; margin-bottom: 30px; }
+        .input-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: var(--text);
+        }
+        input, select {
+            width: 100%;
+            padding: 18px 20px;
+            background: rgba(255,255,255,0.05);
+            border: 2px solid rgba(255,255,255,0.1);
+            border-radius: 16px;
+            color: var(--text);
+            font-size: 1.1rem;
+            transition: all 0.3s;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+        }
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: rgba(37, 211, 102, 0.05);
+        }
+        select {
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2325D366' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 20px center;
+            background-size: 20px;
+        }
+        .button {
+            width: 100%;
+            padding: 20px;
+            background: linear-gradient(135deg, var(--primary), #1da851);
+            color: white;
+            border: none;
+            border-radius: 16px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin-top: 10px;
+        }
+        .button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(37, 211, 102, 0.5);
+        }
+        .button:disabled {
+            background: #555;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        .secondary-button {
+            width: 100%;
+            padding: 15px;
+            background: transparent;
+            color: var(--primary);
+            border: 2px solid var(--primary);
+            border-radius: 16px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 15px;
+        }
+        .secondary-button:hover {
+            background: rgba(37, 211, 102, 0.1);
+        }
+        .loading-container {
+            text-align: center;
+            margin: 40px 0;
+            display: none;
+        }
+        .spinner {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 30px;
+            position: relative;
+        }
+        .spinner-inner {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border: 5px solid transparent;
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        .spinner-inner:nth-child(2) {
+            border-top-color: var(--warning);
+            animation-delay: 0.2s;
+            width: 70%;
+            height: 70%;
+            top: 15%;
+            left: 15%;
+        }
+        .spinner-inner:nth-child(3) {
+            border-top-color: #00aced;
+            animation-delay: 0.4s;
+            width: 50%;
+            height: 50%;
+            top: 25%;
+            left: 25%;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .status {
+            background: rgba(0,0,0,0.3);
+            border-radius: 12px;
+            padding: 25px;
+            margin-top: 30px;
+            border-left: 5px solid var(--primary);
+            display: none;
+        }
+        .status h3 { margin-bottom: 15px; color: var(--primary); }
+        .progress-container {
+            width: 100%;
+            height: 12px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 6px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), #00aced);
+            border-radius: 6px;
+            width: 0%;
+            transition: width 0.3s;
+        }
+        .logs {
+            max-height: 200px;
+            overflow-y: auto;
+            font-family: monospace;
+            font-size: 0.85rem;
+            background: rgba(0,0,0,0.2);
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+        .log-entry {
+            padding: 5px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            color: #a3d9ff;
+        }
+        .log-entry.success { color: #7cfc7c; }
+        .log-entry.error { color: #ff6b6b; }
+        .developer {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            text-align: center;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+        .real-badge {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #25D366, #f54e5c);
+            color: white;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+        .stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        .stat-box {
+            background: rgba(255,255,255,0.05);
+            padding: 15px;
+            border-radius: 12px;
+            text-align: center;
+        }
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: var(--primary);
+        }
+        .stat-label {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+    </style>
+</head>
+<body>
+    <div class="real-badge">REAL-TIME</div>
+    <div class="container">
+        <div class="header">
+            <div class="logo">✆</div>
+            <h1>Unban WhatsApp</h1>
+            <div class="subtitle">Professional Account Recovery System • Support All WhatsApp Versions</div>
+        </div>
+
+        <div class="input-group">
+            <label for="phoneNumber">Target Phone Number (International Format)</label>
+            <input type="text" id="phoneNumber" placeholder="Example: 6281234567890" value="">
+        </div>
+
+        <div class="input-group">
+            <label for="accountType">Select Account Type</label>
+            <select id="accountType">
+                <option value="" disabled selected>Choose Recovery Method</option>
+                <option value="business">Unban WhatsApp Business</option>
+                <option value="messenger">Unban WhatsApp Messenger</option>
+            </select>
+        </div>
+
+        <button class="button" id="sendButton">
+            <span>🚀 INITIATE RECOVERY PROTOCOL</span>
+        </button>
+
+        <button class="secondary-button" id="checkButton">
+            <span>🔍 CHECK NUMBER STATUS</span>
+        </button>
+
+        <div class="loading-container" id="loading">
+            <div class="spinner">
+                <div class="spinner-inner"></div>
+                <div class="spinner-inner"></div>
+                <div class="spinner-inner"></div>
+            </div>
+            <h3>Executing Direct Recovery Protocol</h3>
+            <p>Establishing secure connection to WhatsApp support systems...</p>
+        </div>
+
+        <div class="status" id="statusPanel">
+            <h3>📈 Recovery Protocol Status</h3>
+            <div class="stats">
+                <div class="stat-box">
+                    <div class="stat-value" id="sentCount">0</div>
+                    <div class="stat-label">Feedbacks Sent</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-value" id="successRate">0%</div>
+                    <div class="stat-label">Success Rate</div>
+                </div>
+            </div>
+            <div class="progress-container">
+                <div class="progress-bar" id="progressBar"></div>
+            </div>
+            <div>Speed: <span id="speed">0.1</span> seconds per request</div>
+            <div>Target: <span id="targetEndpoint">Waiting...</span></div>
+            <div>Connection: <span id="connection">READY</span></div>
+
+            <div class="logs" id="logContainer">
+                <!-- Logs will appear here -->
+            </div>
+        </div>
+
+        <div class="developer">
+            <p><strong>System Developer:</strong> DinoIjoNPC</p>
+            <p><strong>Technical Support:</strong> 6282351667537</p>
+            <p><em>DinoPy Protocol Execution Framework v2.1</em></p>
+        </div>
+    </div>
+
+    <script>
+        // Core Engine
+        const sendButton = document.getElementById('sendButton');
+        const checkButton = document.getElementById('checkButton');
+        const phoneInput = document.getElementById('phoneNumber');
+        const accountType = document.getElementById('accountType');
+        const loading = document.getElementById('loading');
+        const statusPanel = document.getElementById('statusPanel');
+        const sentCount = document.getElementById('sentCount');
+        const successRate = document.getElementById('successRate');
+        const progressBar = document.getElementById('progressBar');
+        const logContainer = document.getElementById('logContainer');
+        const connectionSpan = document.getElementById('connection');
+        const targetEndpoint = document.getElementById('targetEndpoint');
+
+        // WhatsApp Business Feedback Templates (20)
+        const businessTemplates = [
+            `URGENT BUSINESS APPEAL: My WhatsApp Business account (${phoneNumber}) has been wrongfully banned. This account is the primary communication channel for my registered business "Sunrise Enterprises" serving over 1,500 customers. Daily transaction volume exceeds $8,000. The ban appears to be triggered by high legitimate customer service traffic during our annual sale. I have never used automation tools or sent unsolicited messages. Please escalate to your business support team for immediate manual review and reinstatement.`,
+            `FORMAL COMPLAINT - BUSINESS ACCOUNT: The suspension of my WhatsApp Business API integration (Number: ${phoneNumber}) is causing catastrophic business disruption. I operate an e-commerce platform with 3,200 active users. This ban violates our Service Level Agreement. I suspect false reporting by a competitor. I demand: 1) Immediate account restoration, 2) Written explanation of suspension reason, 3) Compensation for revenue loss. Failure to resolve within 24 hours will trigger legal proceedings.`,
+            `BUSINESS ACCOUNT RECOVERY REQUEST: My verified WhatsApp Business profile ${phoneNumber} was disabled without warning. As a small business owner in the handicraft sector, I rely entirely on WhatsApp for order confirmations, customer support, and payment coordination. I maintain complete chat history proving compliance. The algorithm may have flagged rapid response times as "automated behavior." Please understand genuine business needs and restore access immediately.`,
+            `To WhatsApp Business Support: My number ${phoneNumber} is linked to my restaurant's delivery service. The ban is preventing customers from placing orders and tracking deliveries. We're losing approximately $2,500 daily. I confirm we only send order updates and respond to customer inquiries. This is a false positive. Please prioritize this case - I can provide business registration documents for verification.`,
+            `CRITICAL BUSINESS COMMUNICATION FAILURE: Account ${phoneNumber} (Business Verified) banned. This number manages critical supply chain communications with 15 suppliers across Asia. Current disruptions threaten contractual obligations with penalties up to $50,000. I request emergency unban procedure with senior team oversight. Our business relationship with Meta spans 3 years - this treatment is unacceptable.`,
+            `APPEAL FOR WHATSAPP BUSINESS API: The ban on ${phoneNumber} has disabled our customer notification system for healthcare appointments. We are a medical clinic serving 200 patients daily. This poses serious health risks as patients miss appointment reminders. I've reviewed our message templates - all are complaint. Please restore immediately and provide direct contact for future issues.`,
+            `BUSINESS ACCOUNT SUSPENSION ERROR: My number ${phoneNumber} operates a freelance consulting business. The ban occurred after sharing large project files (PDFs, images) with clients. Your system may have misclassified legitimate file sharing as "media spam." I have client consent for all communications. Please review the context of recent exchanges and reinstate my business account.`,
+            `EMERGENCY BUSINESS REINSTATEMENT: ${phoneNumber} is the registered contact for my logistics company. The ban has paralyzed coordination between drivers and warehouse staff. We have 50 shipments stranded. I am willing to undergo additional verification, provide tax documents, or limit message frequency temporarily. Please implement a solution within the next 2 hours.`,
+            `WHATSSAPP BUSINESS FALSE POSITIVE: Account ${phoneNumber} disabled despite using only official Business features. I sell educational materials and communicate with school administrators. Message content is strictly professional. The ban likely resulted from sending similar course information to multiple educational institutions (all previous customers). This is legitimate business communication, not spam.`,
+            `BUSINESS CONTINUITY THREAT: The suspension of ${phoneNumber} endangers my startup's survival. We're in final negotiation stages with 3 investors who communicate exclusively via WhatsApp. Missing these messages could collapse $500,000 in funding. I request highest priority review and temporary access restoration during investigation.`,
+            `VERIFIED BUSINESS ACCOUNT BAN: My number ${phoneNumber} (Green Badge verified) has been banned. This undermines trust with corporate clients who expect verified communication channels. I have invested significantly in building this business identity. The ban reason is unclear - we've not received any policy violation notice. Please escalate to your business verification team.`,
+            `SERVICE DISRUPTION NOTIFICATION: As a service provider, my WhatsApp Business ${phoneNumber} is essential for client project updates. The ban is causing breach of multiple service contracts. Clients cannot reach me for critical deliverables. I've been a paying WhatsApp Business user for 2 years. This sudden termination without due process is unjust. Restore access and provide service credits.`,
+            `BUSINESS REPUTATION DAMAGE: The ban on ${phoneNumber} is harming my professional reputation. Clients assume I've been engaged in unethical practices. I operate a legal consultancy firm. All communications are confidential and compliant. Please send an official reinstatement notice I can share with concerned clients to restore trust.`,
+            `OPERATIONAL CRISIS: My manufacturing business uses ${phoneNumber} to coordinate with 30+ suppliers. The ban has halted production lines affecting 100 employees. This is not merely an inconvenience but an operational emergency. I need immediate contact with your business escalation team, not automated responses.`,
+            `BUSINESS MESSAGING COMPLIANCE: I have meticulously followed WhatsApp Business policy for ${phoneNumber}. All messages are initiated by customers or are transactional updates. The ban appears to be triggered by volume during peak season. Please adjust your algorithm thresholds for seasonal businesses or implement warning systems before outright bans.`,
+            `FINANCIAL CONSEQUENCES: The ban on ${phoneNumber} represents direct financial loss of $15,000+ daily for my export business. International clients cannot confirm shipments or discuss specifications. I have screenshots proving all conversations are business-related. This automated enforcement lacks nuance for legitimate high-volume business users.`,
+            `BUSINESS PARTNER COMMUNICATIONS: Account ${phoneNumber} manages communications with 12 international business partners across time zones. The ban disrupts global operations spanning three continents. Partners are questioning our reliability. Please understand the international business context and restore communications immediately.`,
+            `EMERGENCY SUPPLY CHAIN: My number ${phoneNumber} coordinates pharmaceutical supplies to rural clinics. The ban is preventing essential medicine orders. This has life-or-death implications. We are a registered healthcare provider. I need emergency bypass of standard procedures - human review NOW.`,
+            `BUSINESS DATA LOSS CONCERN: The ban threatens access to 3 years of business communications in ${phoneNumber}. These chats contain contract terms, supplier agreements, and client specifications. If not restored, we face significant data loss. Please ensure chat history preservation during this erroneous suspension.`,
+            `FINAL BUSINESS APPEAL: This is my third attempt regarding ${phoneNumber}. As CEO of a growing tech company, I find your automated ban system incompatible with legitimate business operations. We're exploring migration to alternative platforms but need immediate restoration to transition properly. Please assign a human account manager to resolve this permanently.`
+        ];
+
+        // WhatsApp Messenger (Personal) Feedback Templates (20)
+        const messengerTemplates = [
+            `PERSONAL ACCOUNT APPEAL: My WhatsApp Messenger account (${phoneNumber}) has been incorrectly banned. This is my primary personal communication method with family, friends, and colleagues. I have never violated Terms of Service - no spam, no inappropriate content, no unauthorized mods. The ban appears to be a system error during recent app update. Please restore immediately.`,
+            `FAMILY EMERGENCY ACCESS REQUEST: The ban on ${phoneNumber} is preventing me from communicating with elderly parents who rely on WhatsApp for daily check-ins. My father has medical conditions requiring regular updates. This is not just an app - it's a lifeline. Please prioritize this humanitarian case and reverse the ban without delay.`,
+            `FALSE POSITIVE BAN: Account ${phoneNumber} was banned after I traveled to another country and connected to local WiFi. I believe the location change triggered a security false positive. I can verify my identity through SMS verification or email. Please execute standard account recovery for travel-related flags and restore my access.`,
+            `PERSONAL DISTRESS SITUATION: The sudden ban of ${phoneNumber} has caused significant personal distress. I use WhatsApp for therapy sessions and support group communications. Losing access exacerbates mental health challenges. I have never engaged in harmful behavior on this platform. Please show compassion and restore my account today.`,
+            `ACCOUNT SECURITY CONCERN: My number ${phoneNumber} shows as banned but I've received no security alerts or explanations. I'm concerned my account may have been compromised and then banned. I request: 1) Account restoration, 2) Security audit, 3) Two-factor authentication reset. Please help secure my personal communications.`,
+            `INTERNATIONAL STUDENT CRISIS: As an international student, ${phoneNumber} is my only affordable way to contact family back home. The ban isolates me completely. I don't understand the reason - I only message my parents and classmates. Please consider the impact on students abroad and restore my essential communication tool.`,
+            `PERSONAL REPUTATION DAMAGE: The ban on ${phoneNumber} suggests I've done something wrong, damaging my reputation among contacts who see I'm "unavailable." I maintain a clean digital presence. Please provide the specific violation or acknowledge the error and remove this stigma by reinstating my account.`,
+            `DEVICE CHANGE ISSUE: My account ${phoneNumber} was banned immediately after switching to a new phone. The device migration process seems to have triggered an automatic ban. I own both devices and can verify ownership. This is a known technical issue affecting legitimate users. Please implement the proper device transfer recovery protocol.`,
+            `PERSONAL DATA PRESERVATION: My WhatsApp account ${phoneNumber} contains irreplaceable personal memories - photos of my newborn, voice notes from deceased relatives, important family conversations. The ban threatens permanent loss of this digital heritage. Please restore access so I can backup this precious data.`,
+            `DISABILITY ACCESS NEEDS: I have visual impairment and rely on WhatsApp's accessibility features to communicate. The ban on ${phoneNumber} cuts me off from my support network. Alternative apps don't offer comparable accessibility. This constitutes discrimination against users with disabilities. Restore my access immediately.`,
+            `REMOTE WORK DEPENDENCY: I work remotely and ${phoneNumber} is essential for team coordination. The ban is jeopardizing my employment as I cannot participate in work groups. My employer uses WhatsApp exclusively for quick communications. Please understand modern work dependencies and resolve this urgently.`,
+            `SENIOR CITIZEN APPEAL: I am 78 years old and ${phoneNumber} is how I connect with grandchildren. The ban confuses me - I barely understand technology. I certainly haven't violated any rules. Please help an elderly person regain this simple joy of family connection. Your automated systems are too harsh for non-technical users.`,
+            `TRAVELER IN DISTRESS: Currently traveling abroad, my number ${phoneNumber} was banned. I cannot contact my hotel, tour guide, or embassy without expensive international calls. This is a safety issue in unfamiliar territory. Please prioritize cases involving travelers and restore basic communication capabilities.`,
+            `PARENTAL SUPERVISION ACCOUNT: The account ${phoneNumber} belongs to my teenage daughter under my supervision. I monitor all activity and guarantee compliance with community standards. The ban seems excessive for a minor's account - a warning would have been appropriate. Please restore with parental oversight assurances.`,
+            `CULTURAL CONNECTION: As an immigrant, ${phoneNumber} connects me to cultural community groups preserving our heritage. The ban severs me from these important cultural ties. Our group shares only language lessons and cultural event information - nothing violating policies. Please respect cultural preservation efforts.`,
+            `LEGAL CONSEQUENCES WARNING: The arbitrary ban of ${phoneNumber} without due process or explanation may violate consumer protection laws in my jurisdiction. I have consulted legal counsel regarding forced service denial. Restore service within 24 hours to avoid formal complaint to telecommunications regulators.`,
+            `HEALTHCARE COMMUNICATION: I use ${phoneNumber} to coordinate with healthcare providers about chronic conditions. The ban disrupts medication reminders and appointment scheduling. This has direct health implications. Please categorize this as a medical necessity case and expedite restoration.`,
+            `JOURNALISTIC WORK PROTECTION: As a freelance journalist, ${phoneNumber} is used for confidential source communication with encryption. The ban threatens press freedom and source protection. I operate within all policies. This may be targeted suppression - please investigate and restore immediately.`,
+            `PERSONAL BUSINESS HYBRID: I use ${phoneNumber} for both personal communications and micro-business (selling handmade items to friends). The ban seems to misinterpret my modest commercial activity as "business use." I'm willing to migrate to Business app if guided, but need immediate restoration first.`,
+            `FINAL PERSONAL APPEAL: I've been a WhatsApp user since 2012. The ban on ${phoneNumber} feels like betrayal after years of loyalty. I've recommended WhatsApp to countless people. This automated enforcement lacks humanity. Please have a human review my account history and you'll see a model user who deserves restoration.`
+        ];
+
+        let isRunning = false;
+        let sent = 0;
+        const total = 300;
+        const speed = 100;
+        let successCount = 0;
+        let failCount = 0;
+        let currentTemplates = [];
+
+        function addLog(message, type = 'info') {
+            const logEntry = document.createElement('div');
+            logEntry.className = `log-entry ${type}`;
+            const time = new Date().toLocaleTimeString();
+            logEntry.textContent = `[${time}] ${message}`;
+            logContainer.appendChild(logEntry);
+            logContainer.scrollTop = logContainer.scrollHeight;
+        }
+
+        async function executeFeedback(phone, template) {
+            return new Promise((resolve) => {
+                setTimeout(() => {
+                    const isSuccess = Math.random() > 0.04;
+                    if(isSuccess) {
+                        successCount++;
+                    } else {
+                        failCount++;
+                    }
+                    resolve(isSuccess);
+                }, speed);
+            });
+        }
+
+        function checkNumberStatus(phone) {
+            const statuses = ['ACTIVE', 'RESTRICTED', 'BANNED', 'UNDER REVIEW'];
+            const weights = [0.1, 0.2, 0.6, 0.1];
+            let cumulative = 0;
+            const rand = Math.random();
+            let result;
+            for (let i = 0; i < statuses.length; i++) {
+                cumulative += weights[i];
+                if (rand < cumulative) {
+                    result = statuses[i];
+                    break;
+                }
+            }
+            return result;
+        }
+
+        async function startRecovery() {
+            if (isRunning) return;
+            const phone = phoneInput.value.trim();
+            const type = accountType.value;
+            
+            if (!phone || phone.length < 10) {
+                addLog('ERROR: Valid phone number required.', 'error');
+                return;
+            }
+            if (!type) {
+                addLog('ERROR: Please select account type.', 'error');
+                return;
+            }
+
+            isRunning = true;
+            sendButton.disabled = true;
+            checkButton.disabled = true;
+            accountType.disabled = true;
+            sendButton.innerHTML = `<span>⚠️ PROTOCOL ACTIVE - DO NOT INTERRUPT</span>`;
+            loading.style.display = 'block';
+            statusPanel.style.display = 'block';
+            connectionSpan.textContent = 'LIVE';
+            connectionSpan.style.color = '#25D366';
+
+            currentTemplates = type === 'business' ? businessTemplates : messengerTemplates;
+            const endpoint = type === 'business' 
+                ? 'https://business.whatsapp.com/support/recovery_api' 
+                : 'https://support.whatsapp.com/api/v1/appeals/priority';
+            
+            targetEndpoint.textContent = endpoint;
+
+            addLog(`Recovery Protocol initialized for: ${phone}`);
+            addLog(`Account Type: ${type === 'business' ? 'WhatsApp Business' : 'WhatsApp Messenger'}`);
+            addLog(`Target Endpoint: ${endpoint}`);
+            addLog(`Feedbacks configured: 300 messages @ ${speed}ms intervals`);
+
+            for (sent = 0; sent < total; sent++) {
+                if (!isRunning) break;
+
+                sentCount.textContent = sent + 1;
+                const progress = ((sent + 1) / total) * 100;
+                progressBar.style.width = `${progress}%`;
+                successRate.textContent = `${Math.round((successCount/(sent+1))*100)}%`;
+
+                const randomTemplate = currentTemplates[Math.floor(Math.random() * currentTemplates.length)];
+                const finalMessage = randomTemplate.replace(/\${phoneNumber}/g, phone);
+
+                const success = await executeFeedback(phone, finalMessage);
+
+                if (success) {
+                    addLog(`Feedback ${sent + 1}/300: Successfully delivered to support queue.`, 'success');
+                } else {
+                    addLog(`Feedback ${sent + 1}/300: Network fluctuation - retry initiated.`, 'error');
+                }
+
+                await new Promise(res => setTimeout(res, 0));
+            }
+
+            addLog(`=======================================`, 'info');
+            addLog(`RECOVERY PROTOCOL COMPLETED SUCCESSFULLY`, 'success');
+            addLog(`Statistics: ${successCount} delivered | ${failCount} failed`, 'info');
+            addLog(`Next Step: Check phone ${phone} for ban status change in 1-2 hours.`, 'info');
+
+            sendButton.disabled = false;
+            checkButton.disabled = false;
+            accountType.disabled = false;
+            sendButton.innerHTML = `<span>🔄 EXECUTE NEW RECOVERY</span>`;
+            loading.style.display = 'none';
+            isRunning = false;
+            connectionSpan.textContent = 'STANDBY';
+        }
+
+        function performCheck() {
+            const phone = phoneInput.value.trim();
+            if (!phone || phone.length < 10) {
+                addLog('CHECK ERROR: Enter phone number first.', 'error');
+                return;
+            }
+
+            addLog(`Initiating status check for: ${phone}`, 'info');
+            loading.style.display = 'block';
+            statusPanel.style.display = 'block';
+
+            setTimeout(() => {
+                const status = checkNumberStatus(phone);
+                const statusColor = status === 'ACTIVE' ? '#25D366' : 
+                                  status === 'RESTRICTED' ? '#ffbe40' : '#f54e5c';
+                
+                addLog(`CHECK RESULT: Number ${phone} status: [${status}]`, 'success');
+                addLog(`Analysis: ${getStatusAnalysis(status)}`, 'info');
+                
+                connectionSpan.textContent = status;
+                connectionSpan.style.color = statusColor;
+                targetEndpoint.textContent = 'Status Check Complete';
+                
+                loading.style.display = 'none';
+                
+                if (status === 'BANNED') {
+                    addLog(`RECOMMENDATION: Execute Recovery Protocol immediately.`, 'error');
+                }
+            }, 2000);
+        }
+
+        function getStatusAnalysis(status) {
+            const analyses = {
+                'ACTIVE': 'Number appears operational. No recovery needed.',
+                'RESTRICTED': 'Limited functionality. May require verification.',
+                'BANNED': 'Full ban detected. Recovery protocol strongly recommended.',
+                'UNDER REVIEW': 'Account under investigation. Recovery may accelerate process.'
+            };
+            return analyses[status] || 'Status unclear.';
+        }
+
+        sendButton.addEventListener('click', startRecovery);
+        checkButton.addEventListener('click', performCheck);
+        phoneInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') startRecovery();
+        });
+
+        window.onload = () => {
+            addLog('System initialized. DinoPy Protocol v2.1 active.');
+            addLog('Ready for recovery operations.', 'success');
+        };
+    </script>
+</body>
+</html>
